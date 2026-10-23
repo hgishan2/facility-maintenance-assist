@@ -182,11 +182,18 @@
       saveMessage.textContent = "Saving record locally…";
 
       try {
-        await saveMaintenanceRecord(record);
-        saveMessage.textContent =
-          "Record saved on this device. It has not been uploaded.";
-        form.reset();
-        await refreshRecords();
+        
+await saveMaintenanceRecord(record);
+
+saveMessage.textContent =
+  "Record saved on this device. It has not been uploaded.";
+
+if (form && typeof form.reset === "function") {
+  form.reset();
+}
+
+await refreshRecords();
+
       } catch (error) {
         console.error("Record save failed:", error);
         saveMessage.textContent =
