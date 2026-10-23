@@ -62,9 +62,73 @@
     }
   }
 
+  
+  function saveMaintenanceRecord(record) {
+    return openDatabase().then(function (database) {
+      return new Promise(function (resolve, reject) {
+        const transaction = database.transaction(
+          STORE_NAME,
+          "readwrite"
+        );
+
+        const store = transaction.objectStore(STORE_NAME);
+
+        store.put({
+          ...record,
+          recordId: record.recordId || crypto.randomUUID(),
+          syncStatus: "pending",
+          savedAt: new Date().toISOString()
+        });
+
+        transaction.oncomplete = function () {
+          database.close();
+          resolve(true);
+        };
+
+        transaction.onerror = function () {
+          database.close();
+          reject(transaction.error);
+        };
+
+        transaction.onabort = function () {
+          database.close();
+          reject(transaction.error || new Error("Save aborted."));
+        };
+      });
+    });
+  }
+
+  function getMaintenanceRecords() {
+    return openDatabase().then(function (database) {
+      return new Promise(function (resolve, reject) {
+        const transaction = database.transaction(
+          STORE_NAME,
+          "readonly"
+        );
+
+        const request = transaction.objectStore(STORE_NAME).getAll();
+
+        request.onsuccess = function () {
+          resolve(request.result);
+        };
+
+        request.onerror = function () {
+          reject(request.error);
+        };
+
+        transaction.oncomplete = function () {
+          database.close();
+        };
+      });
+    });
+  }
+
   window.FacilityMaintenanceAssist = {
-    openDatabase: openDatabase
+    openDatabase: openDatabase,
+    saveMaintenanceRecord: saveMaintenanceRecord,
+    getMaintenanceRecords: getMaintenanceRecords
   };
+
 
   checkLocalDatabase();
 })();
