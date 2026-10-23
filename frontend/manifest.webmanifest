@@ -1,0 +1,12 @@
+{
+  "id": "./",
+  "name": "Facility Maintenance Assist",
+  "short_name": "Facility Assist",
+  "description": "Offline-first facility maintenance and PPM tracking",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f6f8",
+  "theme_color": "#1d6fb8",
+  "icons": []
+}
